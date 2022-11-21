@@ -1,1 +1,1 @@
-# Python-Multithreaded-Matrix-Mult
+# Python-Multithreaded-Matrix-Multiplication
