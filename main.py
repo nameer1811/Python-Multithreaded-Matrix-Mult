@@ -70,7 +70,7 @@ print(np.array(result))
 # verify it
 matrix_mul = enumerate(np.matmul(A,B))
 verification = all([all([val == result[y][x] for x, val in enumerate(row)]) for y, row in matrix_mul])
-print("result verified" if verification else "incorrect result")
+print("Result Verified" if verification else "incorrect result")
 
 # print statistics
 sleep_times = cons.sleep_times+prod.sleep_times
