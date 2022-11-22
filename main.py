@@ -26,7 +26,7 @@ try:
 
         settings[key] = int(val)
 except:
-    print("Invalid File, using default variables")
+    print("Using default variables, no configuration file passed")
 
 # setting all default variables after loading
 M = settings["M"]
