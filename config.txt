@@ -1,8 +1,8 @@
 <M> = <10>
 <N> = <10>
 <P> = <10>
-<MaxBuffsize> = <6>
-<SplitSize> = <2>
-<NumConsumer> = <12>
+<MaxBuffSize> = <10>
+<SplitSize> = <5>
+<NumConsumer> = <10>
 <MaxProducerSleepTime> = <24>
 <MaxConsumerSleepTime> = <90>
