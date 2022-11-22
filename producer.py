@@ -30,7 +30,7 @@ class producer:
             a_subset = self.matrix_a[low_a:high_a]
 
             for sub2 in range(ceil(len(self.matrix_b[0])/self.SplitSize)):
-                # grabbing subsets of the columns in matrix b
+                # grabbin of the columns in matrix b
                 low_b  = sub2*self.SplitSize
                 high_b = min(len(self.matrix_b[0]),(sub2+1)*self.SplitSize)
                 b_subset = [[self.matrix_b[r][c] for c in range(low_b,high_b)] for r in range(len(self.matrix_b))]
@@ -62,3 +62,4 @@ class producer:
                             self.matrix_c[y+item.low_a][x+item.low_b] = value
 
         # producer thread done, exit and print stats
+        self.shared_buffer.complete()

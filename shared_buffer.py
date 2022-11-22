@@ -29,6 +29,13 @@ class shared_buffer:
         self.condition.notify()
         self.condition.release()
 
+    # used by the producer to notify consumers of having an empty list
+    def complete(self):
+        self.condition.acquire()
+        self.condition.notify()
+        self.condition.release()
+
+
     # used by consumer to get a workitem from the shared buffer
     def get(self):
         # keep track of how many times the internal buffer is full or empty

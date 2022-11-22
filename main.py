@@ -26,7 +26,7 @@ try:
 
         settings[key] = int(val)
 except:
-    print("Using default variables, no configuration file passed")
+    print("Invalid File, using default variables")
 
 # setting all default variables after loading
 M = settings["M"]
@@ -49,17 +49,21 @@ start_time = time.time()
 # create one producer and one consumer thread
 buffer = shared_buffer(MaxBuffSize)
 prod = producer(SplitSize,MaxProducerSleepTime,A,B,buffer)
-cons = consumer(MaxConsumerSleepTime,buffer)
-consumer_thread = threading.Thread(target=cons.run)
+consumers = [consumer(MaxConsumerSleepTime,buffer) for _ in range(NumConsumer)]
+consumer_threads = [threading.Thread(target=cons.run) for cons in consumers]
 producer_thread = threading.Thread(target=prod.run)
 
-consumer_thread.start()
+for con_thread in consumer_threads:
+    con_thread.start()
 producer_thread.start()
 
 # put main thread to sleep until the product/consumer thread is complete
 producer_thread.join()
-cons.done = True # consumer thread no longer has to loop since we finished the product thread
-consumer_thread.join()
+
+# consumer thread no longer has to loop since we finished the product thread, still sleep until all of them are finished processing their inputs though
+for id, con_thread in enumerate(consumer_threads):
+    consumers[id].done = True
+    con_thread.join()
 
 # print the final result
 print("--------------------------------------------------------------------------------")
@@ -70,10 +74,10 @@ print(np.array(result))
 # verify it
 matrix_mul = enumerate(np.matmul(A,B))
 verification = all([all([val == result[y][x] for x, val in enumerate(row)]) for y, row in matrix_mul])
-print("Result Verified" if verification else "incorrect result")
+print("result verified" if verification else "incorrect result")
 
 # print statistics
-sleep_times = cons.sleep_times+prod.sleep_times
+sleep_times = sum([cons.sleep_times for cons in consumers],[])+prod.sleep_times
 avg_time = floor(sum(sleep_times)/len(sleep_times))
 max_time = max(sleep_times)
 
@@ -83,9 +87,9 @@ print("Simulation Time: ".ljust(35), (str(floor((time.time()-start_time)*1000)))
 print("Average Thread Sleep Time: ".ljust(35), (str(avg_time)+"ms"))
 print("Maximum Thread Sleep Time: ".ljust(35), (str(max_time)+"ms"))
 print("Number of Producer Threads: ".ljust(35),"1")
-print("Number of Consumer Threads: ".ljust(35),"1")
+print(f"Number of Consumer Threads: ".ljust(35),len(consumers))
 print("Size of Buffer: ".ljust(35),MaxBuffSize)
 print("Total Number of Items Produced: ".ljust(35),prod.work_items_count)
-print("Total Number of Items Consumed: ".ljust(35),cons.consumed_items)
+print("Total Number of Items Consumed: ".ljust(35),sum([cons.consumed_items for cons in consumers]))
 print("Number Of Times Buffer Was Full: ".ljust(35),buffer.full_count)
 print("Number Of Times Buffer Was Empty: ".ljust(35),buffer.empty_count)
